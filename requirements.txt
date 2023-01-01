@@ -1,0 +1,7 @@
+gensim==4.2.0
+jmetalpy==1.5.5
+language_tool_python==2.7.1
+nltk==3.6.5
+pygad==2.18.1
+readability_lxml==0.8.1
+Requests==2.28.1
