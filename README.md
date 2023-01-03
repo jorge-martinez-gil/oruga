@@ -1,5 +1,8 @@
 # ORUGA
 Optimizing Readability Using Genetic Algorithms
+
+ This repository contains code for reproducing the experiments reported in the paper
+- Jorge Martinez-Gil, "Optimizing Readability Using Genetic Algorithms," [[arXiv preprint]](https://arxiv.org/abs/2301.00374), Jan 2023
  
 ORUGA is a method that seeks to optimize the readability of any text automatically. It is based on genetic algorithms, so it is unsupervised and requires no training.
 
@@ -39,7 +42,15 @@ If you use ORUGA, please cite:
 
 ```
 @inproceedings{martinez2023,
-
+  author    = {Jorge Martinez-Gil},
+  title     = {Optimizing Readability Using Genetic Algorithms},
+  journal   = {CoRR},
+  volume    = {abs/2301.00374},
+  year      = {2023},
+  url       = {https://arxiv.org/2301.00374},
+  eprinttype = {arXiv},
+  eprint    = {2301.00374},
+  timestamp = {Tue, 03 Jan 2023 13:33:09 +0200},
 }
 
 ```
