@@ -2,6 +2,8 @@
 """
 ORUGA: Optimizing Readability Using Genetic Algorithms
 
+[Martinez-Gil2023a] J. Martinez-Gil, "Optimizing Readability Using Genetic Algorithms", arXiv preprint arXiv:2301.00374, 2023
+
 @author: Jorge Martinez-Gil
 """
 
