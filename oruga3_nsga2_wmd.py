@@ -53,9 +53,9 @@ def fitness_func1(solution):
     text_converted = []
     index=0
     for i in res2:
-        if solution[index] <= 0:
+        if solution[index] < 1:
             text_converted.append (i)
-        elif solution[index] > 0:
+        elif solution[index] >= 1:
             number, word = Synonym(i,solution[index])
             text_converted.append (word)
         else: 
@@ -66,7 +66,7 @@ def fitness_func1(solution):
     r = Readability(result)
     return r.flesch_kincaid().score
 
-text = 'Mapagala fortress was an ancient fortified complex of the Anuradhapura Kingdom long before Kasyapa I built his city, Sigiriya. It is located to the South of Sigiriya and closer to Sigiriya tank. It was built by using unshaped boulders to about 20 ft high. Each stone is broad and thick and some of them are about 10 ft high and about 4 ft long. It is believed that it was built before the time of usage of metal tools. Arthur Maurice Hocart noted that cyclopean style stone walls were used for the fortress, and square hammered stones were used for the ramparts of the citadel. However, his note suggests metal (iron) tools were used for construction. Excavations work in this areas found a few stone forges, which proved the claim on the usage of metal tools.'
+text = 'The sea moderates the climate and has important roles in the water cycle, carbon cycle, and nitrogen cycle. Humans harnessing and studying the sea have been recorded since ancient times, and evidenced well into prehistory, while its modern scientific study is called oceanography. The most abundant solid dissolved in seawater is sodium chloride. The water also contains salts of magnesium, calcium, potassium, and mercury, amongst many other elements, some in minute concentrations. Salinity varies widely, being lower near the surface and the mouths of large rivers and higher in the depths of the ocean; however, the relative proportions of dissolved salts vary little across the oceans.'
     
 text_array = []
 index_array = []
@@ -107,9 +107,9 @@ def obtain_text (solution):
     text_converted = []
     index=0
     for i in res2:
-        if solution[index] <= 0:
+        if solution[index] < 1:
             text_converted.append (i)
-        elif solution[index] > 0:
+        elif solution[index] >= 1:
             number, word = Synonym(i,solution[index])
             text_converted.append (word.upper())
         else: 
@@ -144,7 +144,7 @@ class Oruga(FloatProblem):
 
         solution.objectives[2] = float (model.wmdistance(source, target))
         solution.objectives[1] = fitness_func1(solution.variables)
-        solution.objectives[0] = len([1 for i in solution.variables if i > 0])
+        solution.objectives[0] = len([1 for i in solution.variables if i >= 1])
 
         return solution
 

@@ -51,9 +51,9 @@ def fitness_func1(solution):
     text_converted = []
     index=0
     for i in res2:
-        if solution[index] <= 0:
+        if solution[index] < 1:
             text_converted.append (i)
-        elif solution[index] > 0:
+        elif solution[index] >= 1:
             number, word = Synonym(i,solution[index])
             text_converted.append (word)
         else: 
@@ -105,9 +105,9 @@ def obtain_text (solution):
     text_converted = []
     index=0
     for i in res2:
-        if solution[index] <= 0:
+        if solution[index] < 1:
             text_converted.append (i)
-        elif solution[index] > 0:
+        elif solution[index] >= 1:
             number, word = Synonym(i,solution[index])
             text_converted.append (word.upper())
         else: 
@@ -138,7 +138,7 @@ class Oruga(FloatProblem):
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
 
         solution.objectives[1] = fitness_func1(solution.variables)
-        solution.objectives[0] = len([1 for i in solution.variables if i > 0])
+        solution.objectives[0] = len([1 for i in solution.variables if i >= 1])
 
         return solution
 

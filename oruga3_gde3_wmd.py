@@ -51,9 +51,9 @@ def fitness_func1(solution):
     text_converted = []
     index=0
     for i in res2:
-        if solution[index] <= 0:
+        if solution[index] < 1:
             text_converted.append (i)
-        elif solution[index] > 0:
+        elif solution[index] >= 1:
             number, word = Synonym(i,solution[index])
             text_converted.append (word)
         else: 
@@ -64,7 +64,7 @@ def fitness_func1(solution):
     r = Readability(result)
     return r.ari().score
 
-text = 'Big data refers to data sets that are too large or complex to be dealt with by traditional data-processing application software. Data with many fields (rows) offer greater statistical power, while data with higher complexity (more attributes or columns) may lead to a higher false discovery rate. Big data analysis challenges include capturing data, data storage, data analysis, search, sharing, transfer, visualization, querying, updating, information privacy, and data source. Big data was originally associated with three key concepts volume, variety, and velocity. The analysis of big data presents challenges in sampling, and thus previously allowing for only observations and sampling. Thus a fourth concept, veracity, refers to the quality or insightfulness of the data.'
+text = 'The sea moderates the climate and has important roles in the water cycle, carbon cycle, and nitrogen cycle. Humans harnessing and studying the sea have been recorded since ancient times, and evidenced well into prehistory, while its modern scientific study is called oceanography. The most abundant solid dissolved in seawater is sodium chloride. The water also contains salts of magnesium, calcium, potassium, and mercury, amongst many other elements, some in minute concentrations. Salinity varies widely, being lower near the surface and the mouths of large rivers and higher in the depths of the ocean; however, the relative proportions of dissolved salts vary little across the oceans.'
     
 text_array = []
 index_array = []
@@ -105,9 +105,9 @@ def obtain_text (solution):
     text_converted = []
     index=0
     for i in res2:
-        if solution[index] <= 0:
+        if solution[index] < 1:
             text_converted.append (i)
-        elif solution[index] > 0:
+        elif solution[index] >= 1:
             number, word = Synonym(i,solution[index])
             text_converted.append (word.upper())
         else: 
@@ -142,7 +142,7 @@ class Oruga(FloatProblem):
 
         solution.objectives[2] = float (model.wmdistance(source, target))
         solution.objectives[1] = fitness_func1(solution.variables)
-        solution.objectives[0] = len([1 for i in solution.variables if i > 0])
+        solution.objectives[0] = len([1 for i in solution.variables if i >= 1])
 
         return solution
 

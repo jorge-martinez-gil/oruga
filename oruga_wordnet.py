@@ -67,11 +67,11 @@ def obtain_text (solution):
     text_converted = []
     index=0
     for i in res2:
-        if solution[index] <= 0:
+        if solution[index] < 1:
             text_converted.append (i)
-        elif solution[index] > 0:
+        elif solution[index] >= 1:
             number, word = Synonym(i,solution[index])
-            text_converted.append (word)
+            text_converted.append (word.upper())
         else: 
             print ('Error')
         index += 1
@@ -124,9 +124,9 @@ def fitness_func(solution, solution_idx):
     text_converted = []
     index=0
     for i in res2:
-        if solution[index] <= 0:
+        if solution[index] < 1:
             text_converted.append (i)
-        elif solution[index] > 0:
+        elif solution[index] >= 1:
             number, word = Synonym(i,solution[index])
             text_converted.append (word)
         else: 

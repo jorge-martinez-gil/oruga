@@ -48,9 +48,9 @@ def main():
         text_converted = []
         index=0
         for i in res2:
-            if solution[index] <= 0:
+            if solution[index] < 1:
                 text_converted.append (i)
-            elif solution[index] > 0:
+            elif solution[index] >= 1:
                 number, word = Synonym(i,solution[index])
                 text_converted.append (word.upper())
             else: 
@@ -106,9 +106,9 @@ def main():
         text_converted = []
         index=0
         for i in res2:
-            if solution[index] <= 0:
+            if solution[index] < 1:
                 text_converted.append (i)
-            elif solution[index] > 0:
+            elif solution[index] >= 1:
                 number, word = Synonym(i,solution[index])
                 text_converted.append (word)
             else: 
@@ -205,5 +205,5 @@ def main():
 
 
 if __name__ == "__main__":
-    for x in range(3):
+    for x in range(10):
         main()
