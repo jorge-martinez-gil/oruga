@@ -152,7 +152,7 @@ def fitness_func(solution, solution_idx):
             text_converted.append (i)
         elif solution[index] >= 1:
             number, word = Synonym(i,solution[index])
-            text_converted.append (word)
+            text_converted.append (word.upper())
         else: 
             print ('Error')
         index += 1
