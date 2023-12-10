@@ -1,7 +1,7 @@
 # ORUGA
 Optimizing Readability Using Genetic Algorithms
 
-**Latest news!** ORUGA paper has been accepted for publication in Knowledge-Based Systems. Get a free version of the paper during 50 days in this link: [https://authors.elsevier.com/a/1iDnO3OAb99AQn](https://authors.elsevier.com/a/1iDnO3OAb99AQn)
+**Latest news! ORUGA paper has been accepted for publication in Knowledge-Based Systems. Get a free version of the paper during 50 days in this link:** [https://authors.elsevier.com/a/1iDnO3OAb99AQn](https://authors.elsevier.com/a/1iDnO3OAb99AQn)
 
 This repository contains code for reproducing the experiments reported in the paper
 - Jorge Martinez-Gil, "Optimizing Readability Using Genetic Algorithms", [[arXiv preprint]](https://arxiv.org/abs/2301.00374), Jan 2023
