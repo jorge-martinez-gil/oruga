@@ -48,7 +48,7 @@ Run the third version of ORUGA using GDE3 to minimize FKGL score and number of w
 If you use ORUGA, please cite:
 
 ```
-@inproceedings{martinez2024,
+@article{martinez2024,
 	author = {Jorge Martinez-Gil},
 	title = {Optimizing readability using genetic algorithms},
 	journal = {Knowledge-Based Systems},
