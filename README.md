@@ -4,7 +4,7 @@ Optimizing Readability Using Genetic Algorithms
 **Latest news! ORUGA paper has been accepted for publication in Knowledge-Based Systems. Get a free version of the paper during 50 days in this link:** [https://authors.elsevier.com/a/1iDnO3OAb99AQn](https://authors.elsevier.com/a/1iDnO3OAb99AQn)
 
 This repository contains code for reproducing the experiments reported in the paper
-- Jorge Martinez-Gil, "Optimizing Readability Using Genetic Algorithms", [[arXiv preprint]](https://arxiv.org/abs/2301.00374), Jan 2023
+- Jorge Martinez-Gil: Optimizing readability using genetic algorithms. Knowl. Based Syst. 284: 111273 (2024)(https://doi.org/10.1016/j.knosys.2023.111273)
 
 Also available is a collection of three articles on Medium that are written for a general audience.
 - [[Readability Optimization in Python (1/3)]](https://medium.com/@jorgemarcc/readability-optimization-in-python-1-3-4491a5216cf0)
@@ -48,17 +48,15 @@ Run the third version of ORUGA using GDE3 to minimize FKGL score and number of w
 If you use ORUGA, please cite:
 
 ```
-@inproceedings{martinez2023,
-  author    = {Jorge Martinez-Gil},
-  title     = {Optimizing Readability Using Genetic Algorithms},
-  journal   = {CoRR},
-  volume    = {abs/2301.00374},
-  year      = {2023},
-  url       = {https://arxiv.org/abs/2301.00374},
-  doi       = {https://doi.org/10.48550/arXiv.2301.00374},
-  eprinttype = {arXiv},
-  eprint    = {2301.00374},
-  timestamp = {Tue, 03 Jan 2023 13:33:09 +0200},
+@inproceedings{martinez2024,
+	author = {Jorge Martinez-Gil},
+	title = {Optimizing readability using genetic algorithms},
+	journal = {Knowledge-Based Systems},
+	volume = {284},
+	pages = {111273},
+	year = {2024},
+	issn = {0950-7051},
+	doi = {https://doi.org/10.1016/j.knosys.2023.111273}	
 }
 
 ```
