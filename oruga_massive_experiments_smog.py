@@ -176,29 +176,38 @@ def main():
             #print(newText)
             print(index_array)
 
+            # Parameters for the GA
             function_inputs = index_array
-            desired_output = 99
-            num_generations = 100 # Number of generations.
-            num_parents_mating = 10 # Number of solutions to be selected as parents in the mating pool.
-            sol_per_pop = 20 # Number of solutions in the population.
-            num_genes = len(function_inputs)
-            last_fitness = 0
+            num_generations = 100  # Number of generations
+            num_parents_mating = 10  # Number of solutions to be selected as parents in the mating pool
+            sol_per_pop = 20  # Number of solutions in the population
+            num_genes = len(function_inputs)  # Number of genes
 
+            # Initialize the GA instance without the 'on_generation' argument
+            ga_instance = pygad.GA(num_generations=1,  # Set to 1 because we are controlling the generations manually
+                                    num_parents_mating=num_parents_mating,
+                                    sol_per_pop=sol_per_pop,
+                                    num_genes=num_genes,
+                                    fitness_func=fitness_func)
 
+            last_fitness = 0  # Initialize last fitness for comparison
 
-            ga_instance = pygad.GA(num_generations=num_generations,
-                                num_parents_mating=num_parents_mating,
-                                sol_per_pop=sol_per_pop,
-                                num_genes=num_genes,
-                                fitness_func=fitness_func,
-                                on_generation=on_generation)
+            # Manually iterate through generations
+            for generation in range(num_generations):
+                ga_instance.run()  # Run GA for one generation
 
-            # Running the GA to optimize the parameters of the function.
-            ga_instance.run()
-            #ga_instance.plot_fitness(title="Readability evolution", ylabel="-Fitness (minimization)")
+                # Getting the best solution after the current generation
+                solution, solution_fitness, solution_idx = ga_instance.best_solution()
+                
+                print("Generation = {}".format(generation + 1))
+                print("Fitness    = {}".format(solution_fitness))
+                print("Change     = {}".format(solution_fitness - last_fitness))
 
-            # Returning the details of the best solution.
-            solution, solution_fitness, solution_idx = ga_instance.best_solution(ga_instance.last_generation_fitness)
+                last_fitness = solution_fitness  # Update the last fitness value
+
+            # At this point, the GA has completed all generations
+            # You can directly get the best solution details without passing any arguments
+            solution, solution_fitness, solution_idx = ga_instance.best_solution()
             print("Parameters of the best solution : {solution}".format(solution=solution))
             print("Fitness value of the best solution = {solution_fitness}".format(solution_fitness=solution_fitness))
             print("Index of the best solution : {solution_idx}".format(solution_idx=solution_idx))
