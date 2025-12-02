@@ -99,6 +99,3 @@ The repository includes `texts.txt`, which contains the benchmarking dataset use
 ## 📄 License
 
 This project is licensed under the **MIT License**.
-
-```
-```
