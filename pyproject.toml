@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oruga"
+version = "2.0.0"
+description = "Optimizing Readability Using Genetic Algorithms: a unified engine for automatic, semantics-preserving text simplification and readability benchmarking."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Jorge Martinez-Gil", email = "jorgemarcc@gmail.com" }]
+keywords = [
+    "readability",
+    "text simplification",
+    "readability optimization",
+    "genetic algorithm",
+    "evolutionary computation",
+    "multi-objective optimization",
+    "natural language processing",
+    "accessibility",
+    "FKGL",
+    "benchmark",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: Linguistic",
+]
+# Core stays light: the engine, built-in metrics and pure-Python optimizers have
+# no required third-party dependencies. NumPy powers the metaheuristics.
+dependencies = ["numpy>=1.21"]
+
+[project.optional-dependencies]
+wordnet = ["nltk>=3.6"]
+word2vec = ["gensim>=4.0"]
+web = ["requests>=2.25"]
+jmetal = ["jmetalpy>=1.5.5"]
+pygad = ["pygad>=2.1.0"]
+grammar = ["language-tool-python>=2.7"]
+metrics = ["textstat>=0.7"]
+config = ["pyyaml>=5.4"]
+viz = ["matplotlib>=3.4"]
+dev = ["pytest>=7.0", "textstat>=0.7", "pyphen>=0.14", "pyyaml>=5.4", "matplotlib>=3.4"]
+all = [
+    "nltk>=3.6",
+    "gensim>=4.0",
+    "requests>=2.25",
+    "jmetalpy>=1.5.5",
+    "pygad>=2.1.0",
+    "language-tool-python>=2.7",
+    "textstat>=0.7",
+    "pyyaml>=5.4",
+    "matplotlib>=3.4",
+]
+
+[project.urls]
+Homepage = "https://github.com/jorge-martinez-gil/oruga"
+Repository = "https://github.com/jorge-martinez-gil/oruga"
+Paper = "https://doi.org/10.1016/j.knosys.2023.111273"
+
+[project.scripts]
+oruga = "oruga.cli:main"
+
+[tool.setuptools]
+packages = ["oruga", "oruga.optimizers"]
+
+[tool.setuptools.package-data]
+oruga = ["data/*.txt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

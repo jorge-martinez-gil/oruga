@@ -2,100 +2,270 @@
 
 [![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.knosys.2023.111273-blue.svg)](https://doi.org/10.1016/j.knosys.2023.111273)
 [![Journal](https://img.shields.io/badge/Journal-Knowledge--Based_Systems-orange.svg)](https://www.sciencedirect.com/journal/knowledge-based-systems)
-[![PyGAD Version](https://img.shields.io/badge/PyGAD-2.1.0-red.svg)](https://pypi.org/project/pygad/2.1.0/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 
-> **Official implementation of the paper published in *Knowledge-Based Systems* (2024).**
+**ORUGA** (**O**ptimizing **R**eadability **U**sing **G**enetic **A**lgorithms)
+is an open framework for **automatic, semantics-preserving readability
+optimization** and for **benchmarking text-simplification methods**. It treats
+simplification as a search problem: choose word replacements that make a text
+easier to read (lower FKGL / SMOG / Coleman-Liau / ...) while changing as little
+meaning as possible.
 
-**ORUGA** (**O**ptimizing **R**eadability **U**sing **G**enetic **A**lgorithms) is an unsupervised framework designed to automatically enhance the readability of text. Unlike deep learning approaches that require massive training datasets, ORUGA uses evolutionary strategies (Genetic Algorithms) to minimize complexity metrics (like FKGL) while preserving semantic meaning.
+This repository is the **official implementation** of:
+
+> Jorge Martinez-Gil. *Optimizing readability using genetic algorithms.*
+> Knowledge-Based Systems, 284:111273, 2024.
+> [https://doi.org/10.1016/j.knosys.2023.111273](https://doi.org/10.1016/j.knosys.2023.111273)
 
 ![ORUGA Process Example](example.png)
 
-## 📄 Citation
-If you utilize this framework or code in your research, **please cite the following paper**:
+---
+
+## Table of contents
+
+- [What problem does this solve?](#what-problem-does-this-solve)
+- [Why optimize readability automatically?](#why-optimize-readability-automatically)
+- [Why evolutionary computation?](#why-evolutionary-computation)
+- [How does ORUGA differ from LLM-based simplification?](#how-does-oruga-differ-from-llm-based-text-simplification)
+- [Installation](#installation)
+- [Quickstart](#quickstart)
+- [Command-line interface](#command-line-interface)
+- [Architecture](#architecture)
+- [Optimize your own documents](#optimize-your-own-documents)
+- [Benchmark a new simplification algorithm](#benchmark-a-new-simplification-algorithm)
+- [Reproduce the published experiments](#reproduce-the-published-experiments)
+- [Citation](#citation)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## What problem does this solve?
+
+Millions of documents — health leaflets, legal contracts, government forms,
+educational material, scientific abstracts — are written far above the reading
+level of their audience. ORUGA automatically rewrites a text to a **lower
+reading grade** by substituting hard words with simpler, meaning-preserving
+alternatives, and reports exactly how much readability improved and how much the
+text changed.
+
+## Why optimize readability automatically?
+
+Manual simplification is slow, inconsistent and expensive. An automatic,
+**metric-driven** optimizer gives reproducible, measurable improvements and can
+process large corpora in batch — useful for publishers, accessibility teams,
+public administrations and healthcare communicators.
+
+## Why evolutionary computation?
+
+Choosing which words to replace, and with which synonym, is a large combinatorial
+search with multiple competing goals (readability vs. meaning vs. amount of
+change). Evolutionary and swarm algorithms:
+
+- need **no training data or GPUs** — they work directly on a single document;
+- optimize **non-differentiable** objectives (readability formulas) directly;
+- are naturally **multi-objective**, returning a *Pareto front* of trade-offs
+  instead of a single answer;
+- are **transparent** — every change is an explicit, inspectable word choice.
+
+## How does ORUGA differ from LLM-based text simplification?
+
+| | ORUGA | LLM rewriting |
+| :--- | :--- | :--- |
+| Training data | None | Large corpora |
+| Hardware | CPU | Usually GPU |
+| Control of target metric | Direct (optimizes FKGL/SMOG/...) | Indirect (prompted) |
+| Meaning preservation | Explicit objective + measurable | Implicit |
+| Output | Pareto front of trade-offs | Single rewrite |
+| Explainability | Every edit is a traceable word choice | Opaque |
+| Hallucination risk | None (only swaps real synonyms) | Possible |
+
+ORUGA and LLMs are complementary; ORUGA is a strong, reproducible, dependency-light
+**baseline and evaluation harness** that LLM methods can be compared against.
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/jorge-martinez-gil/oruga.git
+cd oruga
+pip install -e .                 # core engine (only needs NumPy)
+```
+
+Optional capabilities are installed as extras, so you only pull what you use:
+
+```bash
+pip install -e ".[wordnet]"      # WordNet synonyms (NLTK)
+pip install -e ".[word2vec]"     # Word2Vec synonyms + Word Mover's Distance
+pip install -e ".[web]"          # web-thesaurus synonyms
+pip install -e ".[jmetal]"       # NSGA-II / GDE3 / SMPSO
+pip install -e ".[pygad]"        # paper-faithful single-objective GA
+pip install -e ".[grammar]"      # LanguageTool post-correction (needs Java)
+pip install -e ".[dev]"          # tests + cross-validation
+pip install -e ".[all]"          # everything
+```
+
+For WordNet, also download the corpus once:
+`python -m nltk.downloader wordnet omw-1.4`.
+
+---
+
+## Quickstart
+
+```python
+from oruga import optimize
+
+report = optimize(
+    "The committee deliberated extensively regarding the ramifications "
+    "of the proposed legislation.",
+    provider="wordnet",     # dictionary | wordnet | word2vec | web
+    optimizer="ga",         # ga | nsga2 | gde3 | smpso | jaya | cuckoo | tlbo | pygad | random
+    metric="fkgl",          # fkgl | flesch | smog | coleman_liau | ari | gunning_fog
+    modification=True,      # also minimize how many words are changed
+    seed=0,
+)
+
+print(report.optimized_text)
+print("FKGL", report.metrics_before["fkgl"], "->", report.metrics_after["fkgl"])
+```
+
+No optional dependencies? Use the built-in dictionary provider and the built-in
+GA — it runs anywhere:
+
+```bash
+python examples/quickstart.py
+```
+
+---
+
+## Command-line interface
+
+```bash
+oruga optimize --text "The committee deliberated extensively." \
+    --provider wordnet --optimizer ga --metric fkgl --modification --seed 0
+
+oruga optimize --config examples/config.example.yaml --file mydoc.txt --json
+
+oruga metrics  --text "Score this passage."        # all readability metrics
+oruga list                                         # providers, optimizers, metrics
+```
+
+---
+
+## Architecture
+
+ORUGA used to be ~27 near-identical scripts. It is now one composable engine:
+
+```
+text + SynonymProvider  ->  CandidateText        (encoding: which words, which synonyms)
+                        ->  OrugaProblem          (objectives: readability + modification + semantics)
+                        ->  Optimizer             (GA / NSGA-II / GDE3 / SMPSO / Jaya / Cuckoo / TLBO / ...)
+                        ->  OptimizationReport    (before/after metrics + Pareto front)
+```
+
+Every axis is pluggable and selectable by string or config file:
+
+| Component | Options |
+| :--- | :--- |
+| Synonym provider | `dictionary`, `wordnet`, `word2vec`, `web` |
+| Readability metric | `fkgl`, `flesch`, `smog`, `coleman_liau`, `ari`, `gunning_fog` |
+| Objectives | readability; + modification rate; + semantic distance (Jaccard or WMD) |
+| Optimizer | `random`, `ga`, `jaya`, `cuckoo`, `tlbo`, `pygad`, `nsga2`, `gde3`, `smpso` |
+
+The readability metrics are implemented in pure Python (no `readability-lxml`
+namespace conflict) and **cross-validated against an independent library**
+(see `tests/test_readability.py`).
+
+---
+
+## Optimize your own documents
+
+```python
+from oruga import optimize_corpus, OrugaConfig
+
+cfg = OrugaConfig(provider="wordnet", optimizer="nsga2",
+                  modification=True, seed=0)
+
+with open("documents.txt") as f:
+    docs = [line.strip() for line in f if line.strip()]
+
+for report in optimize_corpus(docs, config=cfg):
+    print(report.improvement("fkgl"), report.optimized_text)
+```
+
+---
+
+## Benchmark a new simplification algorithm
+
+Already have a method (rule-based, LLM, your own optimizer)? Score its output
+with the **same metrics** ORUGA uses, so results are directly comparable:
+
+```python
+from oruga import readability as rd
+
+original  = "The committee deliberated extensively regarding the ramifications."
+yours     = my_method(original)
+
+print("FKGL  ", rd.score(original, "fkgl"),  "->", rd.score(yours, "fkgl"))
+print("SMOG  ", rd.score(original, "smog"),  "->", rd.score(yours, "smog"))
+print("Flesch", rd.score(original, "flesch"),"->", rd.score(yours, "flesch"))
+```
+
+To plug a brand-new optimizer into the engine, subclass `oruga.optimizers.base.Optimizer`
+and register it — it then works with every provider, metric and objective.
+
+---
+
+## Reproduce the published experiments
+
+The original paper scripts are preserved unmodified under
+[`legacy/`](legacy/README.md) and remain exactly reproducible. The same
+experiments can also be run through the new engine:
+
+```bash
+python examples/reproduce_paper.py
+```
+
+---
+
+## Citation
+
+If you use this framework, please cite:
 
 ```bibtex
 @article{martinez2024oruga,
-    author = {Jorge Martinez-Gil},
-    title = {Optimizing readability using genetic algorithms},
+    author  = {Jorge Martinez-Gil},
+    title   = {Optimizing readability using genetic algorithms},
     journal = {Knowledge-Based Systems},
-    volume = {284},
-    pages = {111273},
-    year = {2024},
-    issn = {0950-7051},
-    doi = {10.1016/j.knosys.2023.111273}    
+    volume  = {284},
+    pages   = {111273},
+    year    = {2024},
+    issn    = {0950-7051},
+    doi     = {10.1016/j.knosys.2023.111273}
 }
-````
-
-## 📚 Tutorials & Context
-
-For a general audience overview of the concepts behind this framework, refer to this three-part series on Medium:
-
-  * [Part 1: Introduction to Readability Optimization](https://medium.com/@jorgemarcc/readability-optimization-in-python-1-3-4491a5216cf0)
-  * [Part 2: Implementation Details](https://medium.com/@jorgemarcc/readabilty-optimization-in-python-2-3-39a4bc4e98e)
-  * [Part 3: Advanced Optimization Strategies](https://medium.com/@jorgemarcc/readability-optimization-in-python-3-3-7cbe204cafef)
-
-## ⚙️ Installation
-
-To reproduce the experiments, install the dependencies:
-
-```bash
-pip install -r requirements.txt
 ```
 
-> [\!WARNING]
-> **CRITICAL DEPENDENCY CONFLICT**
->
-> 1.  **Package Name:** Ensure you use `pygad==2.1.0`. Newer versions may cause compatibility errors with the evolutionary logic.
-> 2.  **Namespace Conflict:** There is a known namespace collision between `Readability` and `readability-lxml`.
->       * This project uses `py-readability-metrics`.
->       * **Do not** install `readability-lxml` in the same environment, or the imports will fail.
+Background reading (Medium series):
+[Part 1](https://medium.com/@jorgemarcc/readability-optimization-in-python-1-3-4491a5216cf0)
+· [Part 2](https://medium.com/@jorgemarcc/readabilty-optimization-in-python-2-3-39a4bc4e98e)
+· [Part 3](https://medium.com/@jorgemarcc/readability-optimization-in-python-3-3-7cbe204cafef)
 
-## 🧪 Experimental Reproduction
+---
 
-The repository allows you to reproduce the single-objective and multi-objective evolutionary experiments reported in the paper.
+## Contributing
 
-### 1\. Single-Objective Optimization
+Contributions are welcome — new synonym providers, optimizers, metrics, datasets
+and benchmarks especially. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-These scripts focus solely on minimizing the **FKGL (Flesch-Kincaid Grade Level)** score using different synonym replacement strategies.
+## License
 
-| Script | Strategy | Description |
-| :--- | :--- | :--- |
-| `oruga_wordnet.py` | **WordNet** | Uses the NLTK WordNet lexical database for synonym retrieval. Fast and standard. |
-| `oruga_word2vec.py` | **Word2Vec** | Uses vector embeddings to find synonyms. *Note: Slower execution due to vector operations.* |
-| `oruga_webscraping.py` | **Web** | Scrapes external thesaurus sites. *Note: Please use responsibly to avoid rate limiting.* |
+MIT — see [LICENSE](LICENSE).
 
-### 2\. Multi-Objective Optimization (NSGA-II & GDE3)
+---
 
-These scripts implement the advanced contributions of the paper, simultaneously minimizing **Readability Score (FKGL)** and **Text modification rate**, preventing the algorithm from changing too many words (Semantic Drift).
-
-**Using NSGA-II (Non-dominated Sorting Genetic Algorithm II):**
-
-```bash
-# Basic Semantic Protection
-python oruga2_nsga2.py
-
-# Advanced Semantic Protection (using Word Mover's Distance - WMD)
-python oruga2_nsga2_wmd.py
-```
-
-**Using GDE3 (Generalized Differential Evolution 3):**
-
-```bash
-# Basic Semantic Protection
-python oruga2_gde3.py
-
-# Advanced Semantic Protection (using Word Mover's Distance - WMD)
-python oruga2_gde3_wmd.py
-```
-
-## 📊 Dataset
-
-The repository includes `texts.txt`, which contains the benchmarking dataset used in the study:
-
-  * **Content:** 10 text samples extracted from Wikipedia.
-  * **Diversity:** Varies in length, topic, and initial complexity levels to test the robustness of the algorithm.
-
-## 📄 License
-
-This project is licensed under the **MIT License**.
+*Keywords: automatic readability optimization, text readability optimization,
+genetic algorithm readability, readability benchmark, text simplification
+benchmark, readability evaluation, semantic-preserving simplification,
+evolutionary text simplification, FKGL optimization, accessibility NLP.*
